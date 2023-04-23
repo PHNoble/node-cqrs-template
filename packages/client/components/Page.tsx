@@ -1,29 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from "@fortawesome/free-solid-svg-icons"
-import Overlay from "./Overlay";
-import Link from "next/link";
 import NavSidebar from "./NavSidebar";
 import { useUser } from "../hooks/useUser";
-import { Router, useRouter } from "next/dist/client/router";
+import { useRouter } from "next/dist/client/router";
+import { routes } from "../utils";
+import Loading from "./Loading";
 
-interface Props {
-  title: string;
-  noHeader?: boolean;
-  guarded?: boolean;
-}
 
-export default function Page({ title, noHeader, guarded, children }: React.PropsWithChildren<Props>) {
-  const { user, error, isLoading } = useUser();
+export default function Page({ children }: React.PropsWithChildren) {
   const router = useRouter();
-  if (guarded && !user) {
-    router.replace("/login");
-    return null
+  const [mounted, setMounted] = useState(false);
+  const { user, error, isLoading: userLoading } = useUser();
+  const isLoading = userLoading && !mounted;
+  const path = router.pathname;
+  const route = routes.find(route => route.url === path)
+  const { title, noHeader, guarded } = route ?? {};
+  useEffect(() => {
+    if (!mounted) {
+      setMounted(true);
+      if (!route) {
+        router.replace("/404")
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (guarded && !user && !userLoading) {
+      router.replace("/login");
+    }
+  }, [user, userLoading])
+
+  if (isLoading || (!user && guarded)) {
+    return <Loading />
   }
-  console.log(user)
+
+
+
   return (
     <div className="flex-1 flex flex-col relative">
-      {!noHeader ? <PageHeader title={title} authenticated={!!user} /> : null}
+      {!noHeader ? <PageHeader title={title ?? "404"} authenticated={!!user} /> : null}
       {!isLoading || !guarded ? <div className="flex-1 flex">
         {children}
       </div> :

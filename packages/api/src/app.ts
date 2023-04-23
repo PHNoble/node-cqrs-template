@@ -121,7 +121,7 @@ async function main() {
 
   app.get("/auth/logout", function (req, res) {
     req.logout(() => {
-      res.redirect(`${process.env.FRONTEND_URL}/`);
+      res.redirect(`${process.env.FRONTEND_URL}/login`);
     });
   });
 

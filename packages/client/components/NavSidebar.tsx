@@ -1,15 +1,9 @@
 import Link from "next/link";
 import Overlay from "./Overlay";
 import React, { useEffect, useState } from "react";
+import { routes } from "../utils";
 
-const routes = [
-  {
-    url: "/",
-    name: "Home"
-  }
-]
-
-interface Props {
+export interface Props {
   open: boolean;
   authenticated?: boolean;
   setClosed: () => void
@@ -25,6 +19,8 @@ export default function NavSidebar({ open, authenticated, setClosed }: Props) {
   if (!open) {
     return null;
   }
+
+  const filteredRoutes = authenticated ? routes.filter(route => !route.hidden) : routes.filter((route) => !route.guarded && !route.hidden)
   return (
     <Overlay onClose={setClosed}>
       <div className={"bg-mantle-800 py-100 h-full flex flex-col text-corn-blue-400 text-lg " +
@@ -33,10 +29,10 @@ export default function NavSidebar({ open, authenticated, setClosed }: Props) {
         Heimdall
         <hr className="border-mantle-500 my-2" />
         <div className="flex-1 flex flex-col p-2">
-          {routes.map(route => (
-            <div key={route.name} className="w-full">
+          {filteredRoutes.map(route => (
+            <div key={route.url} className="w-full">
               <Link href={route.url}>
-                {route.name}
+                {route.title}
               </Link>
             </div>
           ))}

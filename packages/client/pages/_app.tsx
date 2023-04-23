@@ -3,6 +3,7 @@ import React from "react";
 import type { AppProps } from 'next/app'
 import { preload } from 'swr';
 import { swrFetcher } from '../fetchers';
+import Page from '../components/Page';
 
 preload("/api/user", () => swrFetcher("/api/user").catch((e) => {
   console.log("User not signed in")
