@@ -1,0 +1,17 @@
+{
+  "name": "@heimdall/db",
+  "version": "1.0.0",
+  "main": "dist/src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b ./"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.13.0"
+  },
+  "devDependencies": {
+    "prisma": "^4.13.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}

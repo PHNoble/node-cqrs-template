@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/client"
+    },
+    {
+      "path": "./packages/api"
+    },
+    {
+      "path": "./packages/db"
+    },
+    {
+      "path": "./packages/sync_server"
+    }
+  ]
+}

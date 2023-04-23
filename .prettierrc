@@ -1,0 +1,7 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "importOrder": ["^@heimdall/(.*)$", "<THIRD_PART_MODULES>", "^[./]"],
+  "importOrderSortSpecifiers": true
+}
