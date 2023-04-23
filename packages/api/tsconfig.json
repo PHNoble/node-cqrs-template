@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "outDir": "./dist",
+    "typeRoots": ["./src/@types", "../../node_modules/@types"],
+    "paths": {
+      "@heimdall/db/*": ["../../db/*"],
+    }
+  },
+  "types": [
+    "./index.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../db"
+    }
+  ]
+}
