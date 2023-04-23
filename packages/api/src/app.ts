@@ -8,22 +8,34 @@ import session from "express-session";
 import { OAuth2Strategy as GoogleStrategy } from "passport-google-oauth";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { createClient } from "redis";
+import RedisStore from "connect-redis";
 // get env vars
 const env_path = path.join(__dirname, "../../../.env");
 require("dotenv").config({ path: env_path });
 
 const PORT = process.env.API_PORT ?? 3001;
 const SESSION_SECRET = process.env.SESSION_SECRET ?? "";
+const REDIS_URL = process.env.REDIS_URL ?? "";
 
+const redisClient = createClient({
+  url: REDIS_URL,
+});
 const app = express();
 
 async function main() {
+  redisClient.connect();
+  const redisStore = new (RedisStore as any)({
+    client: redisClient,
+    prefix: "api-session:",
+  });
   app.use(cors());
   app.use(morgan("combined"));
   app.use(cookieParser(SESSION_SECRET));
   app.use(express.json());
   app.use(
     session({
+      store: redisStore,
       resave: false,
       saveUninitialized: true,
       secret: SESSION_SECRET,
@@ -85,7 +97,6 @@ async function main() {
         },
       })
       .then((user) => {
-        console.log(user);
         cb(null, user);
       })
       .catch((e) => {
@@ -108,8 +119,17 @@ async function main() {
     }
   );
 
-  app.get("/currentUser", function (req, res) {
-    res.send(req.user);
+  app.get("/auth/logout", function (req, res) {
+    req.logout(() => {
+      res.redirect(`${process.env.FRONTEND_URL}/`);
+    });
+  });
+
+  app.get("/user", function (req, res) {
+    if (!req.user) {
+      res.status(404).send();
+    }
+    res.status(200).send(req.user);
   });
 
   app.get("/ping", function (req, res) {
